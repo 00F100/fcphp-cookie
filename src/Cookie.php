@@ -29,8 +29,8 @@ namespace FcPhp\Cookie
 			}
 			if(isset($cookies[self::COOKIE_KEY])) {
 				if($crypto instanceof ICrypto) {
-					$key = $this->getKey(md5(self::COOKIE_KEY_HASH));
-					$this->cookies = $this->crypto->decode($key, $cookies[self::COOKIE_KEY]);
+					$keyCrypto = md5(self::COOKIE_KEY_HASH);
+					$this->cookies = $this->crypto->decode($keyCrypto, $cookies[self::COOKIE_KEY]);
 				}else{
 					$this->cookies = base64_decode(unserialize($cookies[self::COOKIE_KEY]));
 				}
@@ -41,8 +41,8 @@ namespace FcPhp\Cookie
 		{
 			array_dot($this->cookies, $key, $content);
 			if($this->crypto instanceof ICrypto) {
-				$key = $this->getKey(md5(self::COOKIE_KEY_HASH));
-				$value = $this->crypto->encode($key, $this->cookies);
+				$keyCrypto = md5(self::COOKIE_KEY_HASH);
+				$value = $this->crypto->encode($keyCrypto, $this->cookies);
 			}else{
 				$value = base64_encode(serialize($this->cookies));
 			}
@@ -54,26 +54,6 @@ namespace FcPhp\Cookie
 		public function get(string $key = null)
 		{
 			return array_dot($this->cookies, $key);
-		}
-
-		private function getKey(string $hash)
-		{
-			if(!is_dir($this->pathKeys)) {
-				try {
-					mkdir($this->pathKeys, 0755, true);
-				} catch (Exception $e) {
-					throw new PathNotPermissionFoundException($this->pathKeys, 500, $e);
-				}
-			}
-			$filePath = $this->pathKeys . '/' . $hash . '.key';
-			if(file_exists($filePath)) {
-				return file_get_contents($filePath);
-			}
-			$key = Crypto::getKey();
-			$fopen = fopen($filePath, 'w');
-			fwrite($fopen, $key);
-			fclose($fopen);
-			return $key;
 		}
 	}
 }
