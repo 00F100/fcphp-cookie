@@ -1,0 +1,30 @@
+{
+    "name": "00f100/fcphp-cookie",
+    "type": "package",
+    "version": "0.1.0",
+    "description": "Package to manipulate Cookies",
+    "keywords": ["package", "manipulate", "cookie", "fcphp"],
+    "homepage": "https://github.com/00f100/fcphp-cookie",
+    "authors": [
+        {
+            "name": "João Moraes",
+            "email": "joaomoraesbr@gmail.com",
+            "homepage": "https://github.com/00f100"
+        }
+    ],
+    "require": {
+        "php": ">=7.2",
+        "00f100/fcphp-crypto": "0.2.0",
+        "00f100/array_dot": "0.1.0"
+    },
+    "require-dev": {
+        "00f100/phpdbug": "*",
+        "phpunit/phpunit": "6.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "FcPhp\\Cookie\\": "src/",
+            "FcPhp\\Cookie\\Test\\": "tests/"
+        }
+    }
+}
