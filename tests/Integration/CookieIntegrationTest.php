@@ -1,5 +1,6 @@
 <?php
 
+use FcPhp\Cookie\Facades\CookieFacade;
 use FcPhp\Cookie\Cookie;
 use FcPhp\Crypto\Crypto;
 use FcPhp\Cookie\Interfaces\ICookie;
@@ -12,9 +13,7 @@ class CookieIntegrationTest extends TestCase
 
 	public function setUp()
 	{
-		$nonce = Crypto::getNonce();
-		$crypto =  new Crypto($nonce);
-		$this->instance = new Cookie($this->cookies, $crypto, 'tests/var/keys');
+		$this->instance = CookieFacade::getInstance($this->cookies, Crypto::getNonce(), 'tests/var/keys');
 	}
 
 	public function testInstance()
