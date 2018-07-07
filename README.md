@@ -26,8 +26,25 @@ or add in composer.json
 
 use FcPhp\Cookie\Facades\CookieFacade;
 
+/**
+ * Facade to return instance of Cookie
+ * 
+ * @param string $key Key into $_COOKIE of Cookie
+ * @param array $cookies Variable $_SESSION
+ * @param string $nonce Nonce to Crypto
+ * @param string $pathKeys Path to save keys of Crypto
+ * @param string $forceNewInstance Force create new instance
+ * @return FcPhp\Cookie\Interfaces\ICookie
+ */
+CookieFacade::getInstance(string $key, array $cookies, string $nonce = null, string $pathKeys = null, bool $forceNewInstance = false) :ICookie
 
-$cookie = CookieFacade::getInstance();
+// With No Crypto into content
+$cookie = CookieFacade::getInstance('key-cookie', $_COOKIE);
+
+// With Crypto into content
+use FcPhp\Crypto\Crypto;
+$nonce = Crypto::getNonce();
+$cookie = CookieFacade::getInstance('key-cookie', $_COOKIE, $nonce);
 
 // Create new configuration
 $cookie->set('item.config', 'value');
