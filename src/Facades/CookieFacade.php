@@ -11,9 +11,9 @@ namespace FcPhp\Cookie\Facades
 	{
 		private static $instance;
 
-		public static function getInstance(string $key, array $cookies, string $nonce = null, string $pathKeys = null) :ICookie
+		public static function getInstance(string $key, array $cookies, string $nonce = null, string $pathKeys = null, bool $forceNewInstance = false) :ICookie
 		{
-			if(!self::$instance instanceof ICookie) {
+			if(!self::$instance instanceof ICookie || $forceNewInstance) {
 				$crypto = null;
 				if(!empty($nonce)) {
 					if(empty($pathKeys)) {

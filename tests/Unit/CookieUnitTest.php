@@ -1,20 +1,18 @@
 <?php
 
-use FcPhp\Cookie\Facades\CookieFacade;
 use FcPhp\Cookie\Cookie;
-use FcPhp\Crypto\Crypto;
+use FcPhp\Crypto\Interfaces\ICrypto;
 use FcPhp\Cookie\Interfaces\ICookie;
 use PHPUnit\Framework\TestCase;
 
-class CookieIntegrationTest extends TestCase
+class CookieUnitTest extends TestCase
 {
 	private $cookies = [];
 	private $instance;
 
 	public function setUp()
 	{
-		$nonce = 'NIS6TpQmJMv19AdoBTPeB4BZgj8lnToR';
-		$crypto =  new Crypto($nonce);
+		$crypto = $this->createMock('FcPhp\Crypto\Interfaces\ICrypto');
 		$this->instance = new Cookie('key-cookie', $this->cookies, $crypto, 'tests/var/keys');
 	}
 
@@ -42,9 +40,7 @@ class CookieIntegrationTest extends TestCase
      */
 	public function testPathNoPermission()
 	{
-		// $nonce = Crypto::getNonce();
-		$nonce = 'NIS6TpQmJMv19AdoBTPeB4BZgj8lnToR';
-		$crypto =  new Crypto($nonce);
+		$crypto = $this->createMock('FcPhp\Crypto\Interfaces\ICrypto');
 		$instance = new Cookie('key-cookie', $this->cookies, $crypto, '/root/crypto');
 		$instance->set('config.item', 'content');
 		$this->assertEquals($instance->get('config.item'), 'content');
@@ -55,9 +51,7 @@ class CookieIntegrationTest extends TestCase
      */
 	public function testPathNoPath()
 	{
-		// $nonce = Crypto::getNonce();
-		$nonce = 'NIS6TpQmJMv19AdoBTPeB4BZgj8lnToR';
-		$crypto =  new Crypto($nonce);
+		$crypto = $this->createMock('FcPhp\Crypto\Interfaces\ICrypto');
 		$instance = new Cookie('key-cookie', $this->cookies, $crypto);
 		$instance->set('config.item', 'content');
 		$this->assertEquals($instance->get('config.item'), 'content');
@@ -79,8 +73,16 @@ class CookieIntegrationTest extends TestCase
 		$cookies = [
 			'key-cookie-2' => $value
 		];
-		$nonce = 'NIS6TpQmJMv19AdoBTPeB4BZgj8lnToR';
-		$crypto =  new Crypto($nonce);
+		$crypto = $this->createMock('FcPhp\Crypto\Interfaces\ICrypto');
+		$crypto
+			->expects($this->any())
+			->method('decode')
+			->will($this->returnValue([
+				'config' => [
+					'item' => 'content'
+				]
+			]));
+
 		$instance = new Cookie('key-cookie-2', $cookies, $crypto, 'tests/var/keys');
 		$this->assertEquals($instance->get('config.item'), 'content');
 	}
@@ -88,37 +90,9 @@ class CookieIntegrationTest extends TestCase
 	public function testCreateNewKeyCrypto()
 	{
 		$cookies = [];
-		$nonce = Crypto::getNonce();
-		$crypto =  new Crypto($nonce);
+		$crypto = $this->createMock('FcPhp\Crypto\Interfaces\ICrypto');
 		$instance = new Cookie('key-cookie-3', $cookies, $crypto, 'tests/var/keys');
 		$instance->set('config.item', 'content', 'new-key');
 		$this->assertEquals($instance->get('config.item', 'new-key'), 'content');
 	}
-
-	/**
-     * @expectedException FcPhp\Cookie\Exceptions\PathKeyNotFoundException
-     */
-	public function testCryptoNoPath()
-	{
-		$nonce = Crypto::getNonce();
-		$instance = CookieFacade::getInstance('key-cookie', $this->cookies, $nonce);
-		$instance->set('config.item', 'content');
-		$this->assertEquals($instance->get('config.item'), 'content');
-	}
-
-	public function testCryptoFacade()
-	{
-		$nonce = Crypto::getNonce();
-		$instance = CookieFacade::getInstance('key-cookie', $this->cookies, $nonce, 'tests/var/cache');
-		$instance->set('config.item', 'content');
-		$this->assertEquals($instance->get('config.item'), 'content');
-	}
-
-	public function testNonCryptoFacade()
-	{
-		$instance = CookieFacade::getInstance('key-cookie', [], null, null, true);
-		$instance->set('config.item', 'content');
-		$this->assertEquals($instance->get('config.item'), 'content');
-	}
-
 }

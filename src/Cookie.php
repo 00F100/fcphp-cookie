@@ -11,13 +11,46 @@ namespace FcPhp\Cookie
 
 	class Cookie implements ICookie
 	{
+		/**
+		 * @const Key to cookie into $_COOKIE
+		 */
 		const COOKIE_KEY_HASH = 'fcphp-cookie';
+
+		/**
+		 * @const Time to live of cache
+		 */
 		const COOKIE_TTL = 84000;
+
+		/**
+		 * @var FcPhp\Crypto\Interfaces\ICrypto
+		 */
 		private $crypto;
+
+		/**
+		 * @var string Path to save keys of crypto
+		 */
 		private $pathKeys;
+
+		/**
+		 * @var array Cookies to manipulate
+		 */
 		private $cookies = [];
+
+		/**
+		 * @var string Key into $_COOKIE variable
+		 */
 		private $key;
 
+		/**
+		 * Method to construct instance of Cookie
+		 *
+		 * @param string $key Key into $_COOKIE of Cookie
+		 * @param array $cookies Variable $_SESSION
+		 * @param FcPhp\Crypto\Interfaces\ICrypto $crypto Instance of Crypto to encode content of Cookie
+		 * @param string $pathKeys Path to save keys of Crypto
+		 * @param string $customKey Custom key to generate crypt-key
+		 * @return void
+		 */
 		public function __construct(string $key, array $cookies, ?ICrypto $crypto = null, string $pathKeys = null, string $customKey = null)
 		{
 			$this->key = $key;
@@ -38,7 +71,15 @@ namespace FcPhp\Cookie
 			}
 		}
 
-		public function set(string $key, $content, string $customKey = null)
+		/**
+		 * Method to set new information into Cookie
+		 *
+		 * @param string $key Key into $_COOKIE of Cookie
+		 * @param string $content Content to insert into Cookie
+		 * @param string $customKey Custom key to generate crypt-key
+		 * @return void
+		 */
+		public function set(string $key, $content, string $customKey = null) :void
 		{
 			array_dot($this->cookies, $key, $content);
 			if($this->crypto instanceof ICrypto) {
@@ -52,12 +93,24 @@ namespace FcPhp\Cookie
 			} catch(Exception $e) { }
 		}
 
+		/**
+		 * Method to get information into Cookie
+		 *
+		 * @param string $key Key into $_COOKIE of Cookie
+		 * @return mixed
+		 */
 		public function get(string $key = null)
 		{
 			return array_dot($this->cookies, $key);
 		}
 
-		private function getKey(string $hash)
+		/**
+		 * Method to generate crypt-key or load into cache
+		 *
+		 * @param string $hash Hash to generate crypt-key
+		 * @return string
+		 */
+		private function getKey(string $hash) :string
 		{
 			if(!is_dir($this->pathKeys)) {
 				try {
