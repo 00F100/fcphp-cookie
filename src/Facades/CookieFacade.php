@@ -11,7 +11,7 @@ namespace FcPhp\Cookie\Facades
 	{
 		private static $instance;
 
-		public function getInstance(array $cookies, string $nonce = null, string $pathKeys = null) :ICookie
+		public function getInstance(string $key, array $cookies, string $nonce = null, string $pathKeys = null) :ICookie
 		{
 			if(!self::$instance instanceof ICookie) {
 				$crypto = null;
@@ -20,9 +20,9 @@ namespace FcPhp\Cookie\Facades
 						throw new PathKeyNotFoundException();
 					}
 					$crypto =  new Crypto($nonce);
-					self::$instance = new Cookie($cookies, $crypto, $pathKeys);
+					self::$instance = new Cookie($key, $cookies, $crypto, $pathKeys);
 				}else{
-					self::$instance = new Cookie($cookies);
+					self::$instance = new Cookie($key, $cookies);
 				}
 			}
 			return self::$instance;
