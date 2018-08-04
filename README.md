@@ -14,9 +14,9 @@ $ composer require 00f100/fcphp-cookie
 or add in composer.json
 ```json
 {
-	"require": {
-		"00f100/fcphp-cookie": "*"
-	}
+    "require": {
+        "00f100/fcphp-cookie": "*"
+    }
 }
 ```
 
